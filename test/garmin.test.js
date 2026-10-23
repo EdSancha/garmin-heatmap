@@ -21,7 +21,13 @@ test('exchanges the API key for an access token', async () => {
   assert.equal(await getAccessToken('key', { fetch }), 'tok');
   assert.equal(calls[0].init.method, 'POST');
   assert.equal(calls[0].init.headers.Authorization, 'ApiKey key');
+  assert.equal(calls[0].init.headers.Accept, undefined);
   assert.equal(calls[0].url.origin, BASE_URL);
+});
+
+test('accepts a plain-text token', async () => {
+  const fetch = async () => new Response('plain-token\n', { status: 200, headers: { 'content-type': 'text/plain' } });
+  assert.equal(await getAccessToken('key', { fetch }), 'plain-token');
 });
 
 test('fails clearly without a key or with a rejected key', async () => {

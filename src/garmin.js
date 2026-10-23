@@ -23,9 +23,11 @@ export class GarminError extends Error {
  */
 export async function getAccessToken(apiKey, { fetch = globalThis.fetch, baseUrl = BASE_URL } = {}) {
   if (!apiKey) throw new GarminError('Missing Garmin personal API key');
+  // No Accept header: the endpoint answers `Accept: application/json` with
+  // HTTP 406. Garmin's own example sends none.
   const res = await fetch(baseUrl + TOKEN_PATH, {
     method: 'POST',
-    headers: { Authorization: `ApiKey ${apiKey}`, Accept: 'application/json' },
+    headers: { Authorization: `ApiKey ${apiKey}` },
   });
   if (!res.ok) throw new GarminError(`Token request failed with HTTP ${res.status}`, res.status);
   // The docs don't specify the response body, so accept the usual shapes.
