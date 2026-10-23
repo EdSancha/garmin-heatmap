@@ -1,6 +1,6 @@
 {
   "name": "garmin-heatmap",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Garmin Connect data as GitHub-style activity grids for static sites",
   "type": "module",
   "license": "MIT",

@@ -3,7 +3,7 @@
 // browser (the <garmin-heatmap> element).
 
 import { addDays, dateRange, today, weekday } from './dates.js';
-import { DARK_PALETTES, PALETTES, METRICS, THEME_TEXT, autoThresholds, formatValue, getMetric, levelFor } from './metrics.js';
+import { AUTO_PALETTES, DARK_PALETTES, PALETTES, METRICS, THEME_TEXT, autoThresholds, formatValue, getMetric, levelFor } from './metrics.js';
 
 export const DEFAULTS = {
   metric: 'distance',
@@ -47,8 +47,11 @@ export function renderHeatmap(data, options = {}) {
 
   const requested = o.thresholds ?? metric.thresholds(o);
   const thresholds = requested === 'auto' ? autoThresholds(values) : requested;
-  if (o.theme && !THEME_TEXT[o.theme]) throw new Error(`theme must be "light" or "dark", got "${o.theme}"`);
-  const palette = o.palette ?? (o.theme === 'dark' ? DARK_PALETTES : PALETTES)[metric.palette];
+  if (o.theme && !THEME_TEXT[o.theme]) throw new Error(`theme must be "light", "dark" or "auto", got "${o.theme}"`);
+  const palettes = { dark: DARK_PALETTES, auto: AUTO_PALETTES }[o.theme] ?? PALETTES;
+  const palette = o.palette ?? palettes[metric.palette];
+  // auto's text is already muted, so it isn't faded further.
+  const fade = o.theme === 'auto' ? { label: 1, caption: 1, detail: 0.8 } : { label: 0.55, caption: 0.7, detail: 0.5 };
   // Without a theme, text uses currentColor and follows the page it is inlined in.
   const textColor = o.theme ? `color:${THEME_TEXT[o.theme]};` : '';
   if (palette.length !== thresholds.length + 2) {
@@ -82,13 +85,13 @@ export function renderHeatmap(data, options = {}) {
     parts.push(
       `<text x="0" y="26" fill="currentColor">` +
         `<tspan font-size="24" font-weight="700">${esc(summary.value)}</tspan>` +
-        `<tspan dx="8" font-size="12" opacity="0.7">${esc(summary.caption)}</tspan>` +
-        (summary.detail ? `<tspan dx="4" font-size="10" opacity="0.5">${esc(summary.detail)}</tspan>` : '') +
+        `<tspan dx="8" font-size="12" opacity="${fade.caption}">${esc(summary.caption)}</tspan>` +
+        (summary.detail ? `<tspan dx="4" font-size="10" opacity="${fade.detail}">${esc(summary.detail)}</tspan>` : '') +
         `</text>`
     );
   }
 
-  parts.push(`<g font-family="${LABEL_FONT}" font-size="${LABEL_SIZE}" fill="currentColor" opacity="0.55">`);
+  parts.push(`<g font-family="${LABEL_FONT}" font-size="${LABEL_SIZE}" fill="currentColor" opacity="${fade.label}">`);
   for (const { column, text } of monthLabels(dates, firstRow, o.locale)) {
     parts.push(`<text x="${gridLeft + column * step}" y="${gridTop - 5}">${esc(text)}</text>`);
   }
@@ -169,7 +172,7 @@ function legend(metric, thresholds, palette, o, y) {
   const parts = [`<g font-family="${LABEL_FONT}" font-size="${LABEL_SIZE}">`];
   let x = 0;
   const text = (t) => {
-    parts.push(`<text x="${x}" y="${y + size - 2}" fill="currentColor" opacity="0.55">${esc(t)}</text>`);
+    parts.push(`<text x="${x}" y="${y + size - 2}" fill="currentColor" opacity="${o.theme === 'auto' ? 1 : 0.55}">${esc(t)}</text>`);
     x += t.length * CHAR_WIDTH + 5;
   };
   const box = (level) => {

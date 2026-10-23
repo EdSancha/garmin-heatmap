@@ -122,7 +122,7 @@ Attributes on the element, keys in a `build` config, flags on `render`:
 | `locale` | `en` | Month, weekday and number formats |
 | `thresholds` | per metric | Four cut points between the five colour levels, or `auto` (quintiles of your data; HRV's default) |
 | `palette` | per metric | Six colours: rest/no data, then the five levels |
-| `theme` | none | `light` or `dark`, for standalone images such as a GitHub README: fixes the text colour and, for dark, uses a dark palette. Without it, text follows the page (`currentColor`) |
+| `theme` | none | For standalone images, which can't take page colours. `auto`: mid-grey text and translucent colours that read on any background (best for a GitHub README). `light` or `dark`: fixed colours for a known background. Without it, text follows the page (`currentColor`) |
 | `summary` | `true` | `false` hides the headline number |
 | `legend` | `true` | `false` hides the legend |
 | `noun` | `activities` | Word in the headline count, e.g. `runs` |
@@ -134,17 +134,17 @@ Each cell has a `<title>` tooltip and `data-date` / `data-value` attributes.
 
 ### On a GitHub profile
 
-A GitHub README can show SVG images, but not inline SVG, page CSS or scripts. So render
-standalone versions with fixed colours, `build --themes light,dark` (`<name>-light.svg` and
-`<name>-dark.svg` next to each `<name>.svg`), publish them somewhere public (your site, for
-example), and let `<picture>` pick one to match the reader's GitHub theme:
+A GitHub README can show SVG images, but not inline SVG, page CSS or scripts. Render standalone
+versions with `build --themes auto` (`<name>-auto.svg` next to each `<name>.svg`), publish them
+somewhere public (your site, for example) and link them:
 
 ```html
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://example.com/garmin/running-dark.svg">
-  <img alt="Running distance over the last year" src="https://example.com/garmin/running-light.svg">
-</picture>
+<img alt="Running distance over the last year" src="https://example.com/garmin/running-auto.svg">
 ```
+
+Use `auto` rather than a `<picture>` that switches between `light` and `dark`: `<picture>` follows
+the browser's colour scheme, not the reader's GitHub theme, so a reader with a light system and
+GitHub set to dark gets the light image on a dark page.
 
 Serving the images from a site that already fetches the data keeps your API key in one place,
 and the profile repository needs no workflow or daily commits.

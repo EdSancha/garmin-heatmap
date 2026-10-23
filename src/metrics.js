@@ -21,7 +21,17 @@ export const DARK_PALETTES = {
   blue: ['#21262d', '#0c2d6b', '#123d8a', '#1f6feb', '#388bfd', '#79c0ff'],
 };
 
-export const THEME_TEXT = { light: '#1f2328', dark: '#e6edf3' };
+// For images whose background is unknown, such as a GitHub README, which
+// follows the reader's GitHub theme where <picture> can only see the
+// browser's: a mid-grey text and translucent tints, which read as pale on
+// white and deep on dark.
+const AUTO_HUES = { green: '#2da44e', orange: '#e16f24', purple: '#8a63d2', blue: '#3c7be0' };
+const AUTO_ALPHAS = ['4d', '80', 'b3', 'd9', 'ff']; // 30%, 50%, 70%, 85%, 100%
+export const AUTO_PALETTES = Object.fromEntries(
+  Object.entries(AUTO_HUES).map(([name, hex]) => [name, ['#7d859040', ...AUTO_ALPHAS.map((alpha) => hex + alpha)]])
+);
+
+export const THEME_TEXT = { light: '#1f2328', dark: '#e6edf3', auto: '#7d8590' };
 
 /** Does Garmin type key `key` match the requested `types`? "running" also matches "trail_running". */
 export function matchesType(key, types) {

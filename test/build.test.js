@@ -63,3 +63,13 @@ test('renders a standalone image per theme', () => {
   assert.match(grids[2].svg, /style="[^"]*color:#e6edf3;/);
   assert.match(grids[2].svg, /fill="#21262d"/);
 });
+
+test('renders an auto image that works on any background', () => {
+  const plan = planBuild({ grids: [{ name: 'running', types: ['running'] }] }, { today: sample.end });
+  const [, auto] = renderGrids(sample, plan, { themes: ['auto'] });
+  assert.equal(auto.file, 'running-auto.svg');
+  assert.match(auto.svg, /style="[^"]*color:#7d8590;/);
+  assert.match(auto.svg, /fill="#7d859040"/); // translucent empty days
+  assert.match(auto.svg, /fill="#2da44e4d"/); // translucent level 1
+  assert.doesNotMatch(auto.svg, /opacity="0\.55"/);
+});
