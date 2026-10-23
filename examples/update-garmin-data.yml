@@ -24,12 +24,19 @@ jobs:
     environment: garmin
     steps:
       - uses: actions/checkout@v7
+      # No dependencies, so a checkout of a reviewed commit is all it needs.
+      - uses: actions/checkout@v7
+        with:
+          repository: EdSancha/garmin-heatmap
+          ref: <commit-sha>
+          path: .garmin-heatmap
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Fetch the last year
         # The key is only in this step's environment. Fetch only what the site shows.
-        run: npx --yes github:EdSancha/garmin-heatmap#<commit-sha> fetch --days 365 --sources activities --out assets/garmin.json
+        run: node .garmin-heatmap/bin/garmin-heatmap.js fetch --days 365 --sources activities --out assets/garmin.json
         env:
           GARMIN_API_KEY: ${{ secrets.GARMIN_API_KEY }}
       - name: Commit if the data changed

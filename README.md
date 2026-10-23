@@ -13,6 +13,18 @@ It has two parts, and no runtime dependencies:
    no JavaScript on the page) or in the browser (the `<garmin-heatmap>` element, reading
    a `garmin.json` written by `garmin-heatmap fetch`).
 
+## Install
+
+There is nothing to install: the library has no dependencies. Clone a release and run it with
+Node 20 or later.
+
+```sh
+git clone --depth 1 --branch v0.1.0 https://github.com/EdSancha/garmin-heatmap
+```
+
+(`npx github:EdSancha/garmin-heatmap` doesn't work: npm 10 fails with "GitFetcher requires an
+Arborist constructor to pack a tarball".)
+
 ## 1. Get your data
 
 Create a personal API key at
@@ -20,7 +32,7 @@ Create a personal API key at
 Garmin shows it once; keys last 30 days to a year.
 
 ```sh
-GARMIN_API_KEY=… npx github:EdSancha/garmin-heatmap fetch --days 365 --out garmin.json
+GARMIN_API_KEY=… node garmin-heatmap/bin/garmin-heatmap.js fetch --days 365 --out garmin.json
 ```
 
 | Flag | Default | |
@@ -80,7 +92,7 @@ available but switched off; `build` then fetches nothing for it.
 ```
 
 ```sh
-GARMIN_API_KEY=… npx github:EdSancha/garmin-heatmap build --config heatmaps.json --out-dir _includes/garmin
+GARMIN_API_KEY=… node garmin-heatmap/bin/garmin-heatmap.js build --config heatmaps.json --out-dir _includes/garmin
 ```
 
 `build` works out which sources and dates the enabled grids need, fetches only those, and
@@ -92,7 +104,7 @@ Inline the SVGs (`{% include garmin/running.svg %}` in Jekyll) so they pick up y
 font and text colour. For a single grid, `render` draws one SVG from a dataset:
 
 ```sh
-npx github:EdSancha/garmin-heatmap render --data garmin.json --metric hrv --out hrv.svg
+node garmin-heatmap/bin/garmin-heatmap.js render --data garmin.json --metric hrv --out hrv.svg
 ```
 
 ### Options
@@ -145,14 +157,14 @@ nutrition, women's health), not just what a heatmap shows. Treat it like a passw
 - Choose the shortest lifetime you'll comfortably renew (90 or 180 days). If it may have leaked,
   delete it in Connect settings; that revokes it at once.
 - Locally, read it from a password manager rather than typing it into your shell history:
-  `GARMIN_API_KEY=$(op read "op://Private/Garmin Personal API/credential") npx … fetch`.
+  `GARMIN_API_KEY=$(op read "op://Private/Garmin Personal API/credential") node garmin-heatmap/bin/garmin-heatmap.js fetch`.
 
 **The code that sees the key**
 - `fetch` sends the key only to `personal.connectapi.garmin.com`, never logs it or the token, and
   masks the token in GitHub Actions logs (logs of public repositories are public).
-- `npx github:…#v0.1.0` runs whatever that tag points to, and tags can move. In workflows, pin a
-  commit SHA you have reviewed. The package has no dependencies, so that SHA is all the code
-  that runs.
+- In workflows, check out a commit SHA you have reviewed rather than a tag, which can move (see
+  [`examples/update-garmin-data.yml`](examples/update-garmin-data.yml)). With no dependencies,
+  that commit is all the code that sees your key; no npm install runs.
 
 **What gets published**
 - The dataset is public once deployed: daily totals, no names, IDs, locations or times. Daily
