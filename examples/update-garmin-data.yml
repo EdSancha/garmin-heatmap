@@ -1,0 +1,42 @@
+# For sites whose host builds straight from the repo (no build workflow of
+# your own). Copy to .github/workflows/ in the site's repository.
+#
+# Setup (see "Security" in the README):
+#   1. Settings → Environments → New environment "garmin". Under deployment
+#      branches, allow only your default branch.
+#   2. gh secret set GARMIN_API_KEY --env garmin   (it prompts; never paste the key in a file)
+#   3. Replace <commit-sha> with a reviewed commit of EdSancha/garmin-heatmap.
+#
+# Note: every daily version of the data stays in git history.
+name: Update Garmin data
+
+on:
+  schedule:
+    - cron: "17 5 * * *" # daily, 05:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment: garmin
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Fetch the last year
+        # The key is only in this step's environment. Fetch only what the site shows.
+        run: npx --yes github:EdSancha/garmin-heatmap#<commit-sha> fetch --days 365 --sources activities --out assets/garmin.json
+        env:
+          GARMIN_API_KEY: ${{ secrets.GARMIN_API_KEY }}
+      - name: Commit if the data changed
+        run: |
+          git add assets/garmin.json
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Garmin data"
+          git push

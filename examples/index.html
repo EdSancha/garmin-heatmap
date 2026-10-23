@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>garmin-heatmap examples</title>
+  <style>
+    body { margin: 2rem; font-family: system-ui, sans-serif; color: #1a1a1a; background: #fafaf7; }
+    h1 { margin: 0 0 .25rem; }
+    p { margin: 0 0 2rem; opacity: .6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2.5rem 3rem; }
+  </style>
+  <script type="module" src="../src/element.js"></script>
+</head>
+<body>
+  <h1>Summer of training</h1>
+  <p>Sample data, June to September 2026. Run <code>npm run sample</code> to regenerate it.</p>
+  <div class="grid">
+    <garmin-heatmap src="sample.json" metric="distance" types="running" start="2026-06-01" end="2026-09-30" noun="runs"></garmin-heatmap>
+    <garmin-heatmap src="sample.json" metric="elevation" start="2026-06-01" end="2026-09-30"></garmin-heatmap>
+    <garmin-heatmap src="sample.json" metric="sleep" start="2026-06-01" end="2026-09-30"></garmin-heatmap>
+    <garmin-heatmap src="sample.json" metric="hrv" start="2026-06-01" end="2026-09-30"></garmin-heatmap>
+  </div>
+  <h1 style="margin-top:3rem">Last 52 weeks</h1>
+  <p>Running distance, in miles, weeks starting on Sunday.</p>
+  <garmin-heatmap src="sample.json" metric="distance" types="running" units="imperial" week-start="sunday" noun="runs"></garmin-heatmap>
+</body>
+</html>

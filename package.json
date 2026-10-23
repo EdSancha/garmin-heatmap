@@ -1,0 +1,23 @@
+{
+  "name": "garmin-heatmap",
+  "version": "0.1.0",
+  "description": "Garmin Connect data as GitHub-style activity grids for static sites",
+  "type": "module",
+  "license": "MIT",
+  "author": "Eduardo Diaz Sancha",
+  "repository": "github:EdSancha/garmin-heatmap",
+  "keywords": ["garmin", "heatmap", "contribution-graph", "web-component", "svg", "jekyll"],
+  "exports": {
+    ".": "./src/index.js",
+    "./element": "./src/element.js",
+    "./render": "./src/render.js"
+  },
+  "bin": { "garmin-heatmap": "./bin/garmin-heatmap.js" },
+  "files": ["src", "bin"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "sample": "node scripts/sample-data.js",
+    "serve": "python3 -m http.server 8000"
+  }
+}

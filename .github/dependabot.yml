@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # No npm dependencies yet; this entry picks them up if any are added.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule: { interval: "monthly" }
+    open-pull-requests-limit: 5
+    cooldown: { default-days: 7, semver-major-days: 30 }
+    commit-message: { prefix: "deps", include: "scope" }
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "monthly" }
+    commit-message: { prefix: "ci" }
+    groups:
+      actions: { patterns: ["*"] }
