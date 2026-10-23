@@ -19,7 +19,7 @@ There is nothing to install: the library has no dependencies. Clone a release an
 Node 20 or later.
 
 ```sh
-git clone --depth 1 --branch v0.1.0 https://github.com/EdSancha/garmin-heatmap
+git clone --depth 1 --branch v0.4.0 https://github.com/EdSancha/garmin-heatmap
 ```
 
 (`npx github:EdSancha/garmin-heatmap` doesn't work: npm 10 fails with "GitFetcher requires an
@@ -66,7 +66,7 @@ Distances and elevation are in metres, durations in seconds; `hard` is time in h
 ### In the browser
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/EdSancha/garmin-heatmap@v0.1.0/src/element.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/EdSancha/garmin-heatmap@v0.4.0/src/element.js"></script>
 
 <garmin-heatmap src="/assets/garmin.json" metric="distance" types="running" noun="runs"></garmin-heatmap>
 <garmin-heatmap src="/assets/garmin.json" metric="sleep" weeks="17"></garmin-heatmap>
