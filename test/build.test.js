@@ -50,6 +50,16 @@ test('rejects config mistakes', () => {
 test('renders each grid', () => {
   const plan = planBuild({ grids: [{ name: 'running', types: ['running'] }, { name: 'hrv', metric: 'hrv' }] }, { today: sample.end });
   const grids = renderGrids(sample, plan);
-  assert.deepEqual(grids.map((g) => g.name), ['running', 'hrv']);
+  assert.deepEqual(grids.map((g) => g.file), ['running.svg', 'hrv.svg']);
   assert.ok(grids.every((g) => g.svg.startsWith('<svg')));
+});
+
+test('renders a standalone image per theme', () => {
+  const plan = planBuild({ grids: [{ name: 'running', types: ['running'] }] }, { today: sample.end });
+  const grids = renderGrids(sample, plan, { themes: ['light', 'dark'] });
+  assert.deepEqual(grids.map((g) => g.file), ['running.svg', 'running-light.svg', 'running-dark.svg']);
+  assert.doesNotMatch(grids[0].svg, /style="[^"]*color:#/);
+  assert.match(grids[1].svg, /style="[^"]*color:#1f2328;/);
+  assert.match(grids[2].svg, /style="[^"]*color:#e6edf3;/);
+  assert.match(grids[2].svg, /fill="#21262d"/);
 });

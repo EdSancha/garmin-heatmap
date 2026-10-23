@@ -1,7 +1,7 @@
 // Node entry point. The browser element lives in ./element.js.
 export { renderHeatmap, parseOptions, DEFAULTS, OPTION_NAMES } from './render.js';
 export { planBuild, renderGrids } from './build.js';
-export { METRICS, PALETTES, getMetric, formatValue, autoThresholds, levelFor, matchesType } from './metrics.js';
+export { METRICS, PALETTES, DARK_PALETTES, THEME_TEXT, getMetric, formatValue, autoThresholds, levelFor, matchesType } from './metrics.js';
 export { buildDays, buildDataset, DATA_VERSION } from './aggregate.js';
 export {
   BASE_URL, SOURCES, GarminError, getAccessToken, createClient,

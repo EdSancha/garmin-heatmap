@@ -47,7 +47,14 @@ export function planBuild(config, { today = currentDate() } = {}) {
   };
 }
 
-/** Renders every planned grid. All or nothing: throws before returning any SVG. */
-export function renderGrids(data, plan) {
-  return plan.grids.map(({ name, options }) => ({ name, svg: renderHeatmap(data, options) }));
+/**
+ * Renders every planned grid as `<name>.svg` (colours from the page it is
+ * inlined in), plus `<name>-<theme>.svg` per theme for standalone images.
+ * All or nothing: throws before returning any SVG.
+ */
+export function renderGrids(data, plan, { themes = [] } = {}) {
+  return plan.grids.flatMap(({ name, options }) => [
+    { file: `${name}.svg`, svg: renderHeatmap(data, options) },
+    ...themes.map((theme) => ({ file: `${name}-${theme}.svg`, svg: renderHeatmap(data, { ...options, theme }) })),
+  ]);
 }

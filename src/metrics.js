@@ -12,6 +12,17 @@ export const PALETTES = {
   blue: ['#ebedf0', '#d6e5fa', '#a6c4f0', '#6c9de2', '#3c70c6', '#1f3f86'],
 };
 
+// For standalone images (e.g. a GitHub README), which can't take colours
+// from the page: GitHub-like dark palettes, and the text colour per theme.
+export const DARK_PALETTES = {
+  green: ['#21262d', '#0e4429', '#006d32', '#1a8a3a', '#26a641', '#39d353'],
+  orange: ['#21262d', '#3d1f0a', '#6b3410', '#a64f19', '#d9692a', '#f0883e'],
+  purple: ['#21262d', '#2e1f5e', '#4a2f9c', '#6e4fd0', '#8f72e8', '#bca8ff'],
+  blue: ['#21262d', '#0c2d6b', '#123d8a', '#1f6feb', '#388bfd', '#79c0ff'],
+};
+
+export const THEME_TEXT = { light: '#1f2328', dark: '#e6edf3' };
+
 /** Does Garmin type key `key` match the requested `types`? "running" also matches "trail_running". */
 export function matchesType(key, types) {
   return !types?.length || types.some((t) => key === t || key.includes(t));
@@ -73,7 +84,7 @@ export const METRICS = {
     thresholds: () => [0.5, 1, 1.5, 2],
     summary: 'week',
     caption: 'training per week',
-    palette: 'green',
+    palette: 'blue',
   },
   intensity: {
     source: 'activities',

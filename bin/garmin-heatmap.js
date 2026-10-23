@@ -11,7 +11,7 @@ import { OPTION_NAMES, parseOptions, renderHeatmap } from '../src/render.js';
 const HELP = `garmin-heatmap: Garmin Connect data as GitHub-style activity grids
 
 Usage:
-  garmin-heatmap build  --config heatmaps.json --out-dir DIR [--data-out garmin.json]
+  garmin-heatmap build  --config heatmaps.json --out-dir DIR [--themes light,dark] [--data-out garmin.json]
   garmin-heatmap fetch  [--days 365] [--end YYYY-MM-DD] [--sources ${SOURCES.join(',')}] [--out garmin.json]
   garmin-heatmap render --data garmin.json [--metric distance] [--types running] [--out grid.svg] [options]
 
@@ -23,7 +23,7 @@ Both read your personal API key from GARMIN_API_KEY
 render options: --metric (distance, elevation, duration, intensity, activities,
 sleep, sleep-score, hrv, steps), --types, --start, --end, --weeks, --week-start,
 --units (metric|imperial), --locale, --thresholds (a,b,c,d or auto),
---palette (6 colours), --summary false, --legend false, --noun, --title,
+--palette (6 colours), --theme (light|dark, for standalone images), --summary false, --legend false, --noun, --title,
 --cell-size, --gap, --radius`;
 
 async function download({ start, end, sources }) {
@@ -46,6 +46,7 @@ async function buildCommand(args) {
       config: { type: 'string', default: 'heatmaps.json' },
       'out-dir': { type: 'string' },
       'data-out': { type: 'string' },
+      themes: { type: 'string' },
     },
   });
   if (!values['out-dir']) throw new Error('--out-dir is required');
@@ -56,15 +57,15 @@ async function buildCommand(args) {
   let grids = [];
   if (plan.grids.length) {
     const dataset = await download(plan);
-    grids = renderGrids(dataset, plan);
+    grids = renderGrids(dataset, plan, { themes: values.themes?.split(',').map((t) => t.trim()) ?? [] });
     if (values['data-out']) await writeJson(values['data-out'], dataset);
   }
   // Only write once everything rendered, and drop grids that are no longer enabled.
   for (const file of await readdir(dir)) {
-    if (file.endsWith('.svg') && !grids.some((g) => `${g.name}.svg` === file)) await rm(join(dir, file));
+    if (file.endsWith('.svg') && !grids.some((g) => g.file === file)) await rm(join(dir, file));
   }
-  for (const { name, svg } of grids) await writeFile(join(dir, `${name}.svg`), `${svg}\n`);
-  console.error(`Wrote ${grids.length} grid(s) to ${dir}${plan.sources.length ? ` (sources: ${plan.sources.join(', ')})` : ''}`);
+  for (const { file, svg } of grids) await writeFile(join(dir, file), `${svg}\n`);
+  console.error(`Wrote ${grids.length} SVG(s) for ${plan.grids.length} grid(s) to ${dir}${plan.sources.length ? ` (sources: ${plan.sources.join(', ')})` : ''}`);
 }
 
 async function fetchCommand(args) {
