@@ -25,6 +25,7 @@ for (const date of dateRange(start, end)) {
         distance,
         duration: Math.round(distance * between(0.28, 0.34)),
         elevation: Math.round(distance * (type === 'trail_running' ? between(0.03, 0.06) : between(0.002, 0.012))),
+        hard: Math.round(random() < 0.3 ? between(900, 2700) : between(0, 300)),
       },
     };
   }

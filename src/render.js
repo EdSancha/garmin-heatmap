@@ -124,7 +124,7 @@ function summarize(metric, dates, values, days, o) {
     const weeks = Math.max(present.length, 1) / 7;
     const total = present.reduce((sum, v) => sum + v, 0);
     const summary = { value: formatValue(metric, total / weeks, o), caption: metric.caption ?? 'per week' };
-    if (metric !== METRICS.activities) {
+    if (metric !== METRICS.activities && metric.countDetail !== false) {
       const count = dates.reduce((n, d) => n + METRICS.activities.value(days[d], o), 0);
       summary.detail = `(${count} ${o.noun ?? 'activities'})`;
     }

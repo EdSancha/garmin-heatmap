@@ -20,8 +20,8 @@ grid. fetch writes the dataset (daily totals only: no activity names, IDs or GPS
 Both read your personal API key from GARMIN_API_KEY
 (create one at https://connect.garmin.com/app/settings/personalApiToken).
 
-render options: --metric (distance, elevation, duration, activities, sleep,
-sleep-score, hrv, steps), --types, --start, --end, --weeks, --week-start,
+render options: --metric (distance, elevation, duration, intensity, activities,
+sleep, sleep-score, hrv, steps), --types, --start, --end, --weeks, --week-start,
 --units (metric|imperial), --locale, --thresholds (a,b,c,d or auto),
 --palette (6 colours), --summary false, --legend false, --noun, --title,
 --cell-size, --gap, --radius`;

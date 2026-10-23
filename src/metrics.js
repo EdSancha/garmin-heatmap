@@ -31,13 +31,15 @@ function hoursAndMinutes(hours) {
   const total = Math.round(hours * 60);
   const h = Math.floor(total / 60);
   const m = total % 60;
+  if (!h) return `${m}m`;
   return m ? `${h}h ${m}m` : `${h}h`;
 }
 
 // source: the Personal API data the metric needs (see SOURCES in garmin.js).
 // kind "activity": a day without activity is a rest day (value 0).
 // kind "measure": a day without a reading has no value (null).
-// summary "week": total per week. summary "day": average over days with data.
+// summary "week": total per week, plus the number of activities unless
+// countDetail is false. summary "day": average over days with data.
 export const METRICS = {
   distance: {
     source: 'activities',
@@ -70,7 +72,22 @@ export const METRICS = {
     format: hoursAndMinutes,
     thresholds: () => [0.5, 1, 1.5, 2],
     summary: 'week',
+    caption: 'training per week',
     palette: 'green',
+  },
+  intensity: {
+    source: 'activities',
+    kind: 'activity',
+    label: 'Hard minutes',
+    // Minutes in heart-rate zones 4 and 5: near zero for an easy run, high for intervals or a race.
+    value: (day, o) => sumActivities(day, o.types, 'hard') / 60,
+    unit: () => 'min',
+    decimals: 0,
+    thresholds: () => [5, 15, 30, 45],
+    summary: 'week',
+    caption: 'in zones 4–5 per week',
+    countDetail: false,
+    palette: 'orange',
   },
   activities: {
     source: 'activities',

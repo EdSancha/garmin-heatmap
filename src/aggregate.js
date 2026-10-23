@@ -7,14 +7,15 @@
 //   version: 1, generated, start, end,
 //   days: {
 //     "2026-06-01": {
-//       activities: { running: { count, distance, duration, elevation } },
+//       activities: { running: { count, distance, duration, elevation, hard } },
 //       sleep: { seconds, score },
 //       hrv: 118,
 //       steps: 11873
 //     }
 //   }
 // }
-// Units are SI: metres and seconds. Activity keys are Garmin type keys.
+// Units are SI: metres and seconds. `hard` is time in heart-rate zones 4 and 5.
+// Activity keys are Garmin type keys.
 
 export const DATA_VERSION = 1;
 
@@ -27,11 +28,12 @@ export function buildDays({ activities = [], sleep = [], hrv = [], summaries = [
     const date = a.startTimeLocal?.slice(0, 10);
     if (!inRange(date)) continue;
     const type = a.activityType?.typeKey ?? 'other';
-    const t = ((day(date).activities ??= {})[type] ??= { count: 0, distance: 0, duration: 0, elevation: 0 });
+    const t = ((day(date).activities ??= {})[type] ??= { count: 0, distance: 0, duration: 0, elevation: 0, hard: 0 });
     t.count += 1;
     t.distance += Math.round(a.distance ?? 0);
     t.duration += Math.round(a.duration ?? 0);
     t.elevation += Math.round(a.elevationGain ?? 0);
+    t.hard += Math.round((a.hrTimeInZone_4 ?? 0) + (a.hrTimeInZone_5 ?? 0));
   }
 
   for (const s of sleep) {

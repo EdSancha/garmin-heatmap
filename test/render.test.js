@@ -43,6 +43,25 @@ test('filters activities by type, matching subtypes', () => {
   assert.match(svg, /\(2 activities\)/);
 });
 
+test('counts hard minutes across activities', () => {
+  const days = {
+    '2026-06-01': { activities: { running: { count: 1, distance: 10000, duration: 3600, elevation: 0, hard: 1800 }, cycling: { count: 1, distance: 0, duration: 3600, elevation: 0, hard: 600 } } },
+    '2026-06-02': { activities: { running: { count: 1, distance: 10000, duration: 3600, elevation: 0, hard: 120 } } },
+  };
+  const svg = renderHeatmap({ start: '2026-06-01', end: '2026-06-07', days }, { metric: 'intensity' });
+  const levels = Object.fromEntries(cells(svg).map((c) => [c.date, c.level]));
+  // 40 min: level 4 of [5,15,30,45]; 2 min: level 1.
+  assert.equal(levels['2026-06-01'], 4);
+  assert.equal(levels['2026-06-02'], 1);
+  assert.match(svg, /42 min<\/tspan><tspan[^>]*>in zones 4–5 per week<\/tspan><\/text>/);
+});
+
+test('writes short durations without hours', () => {
+  const svg = renderHeatmap(data, { metric: 'duration', start: '2026-06-01', end: '2026-06-01' });
+  assert.match(svg, />&lt;30m<\/text>/);
+  assert.match(svg, /Jun 1, 2026 · 1h<\/title>/);
+});
+
 test('converts units for imperial', () => {
   const svg = renderHeatmap(data, { start: '2026-06-01', end: '2026-06-01', types: ['running'], units: 'imperial' });
   assert.match(svg, /Jun 1, 2026 · 7\.5 mi/);
