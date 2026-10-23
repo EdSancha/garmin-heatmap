@@ -3,7 +3,7 @@
 // browser (the <garmin-heatmap> element).
 
 import { addDays, dateRange, today, weekday } from './dates.js';
-import { PALETTES, METRICS, autoThresholds, formatValue, getMetric, levelFor } from './metrics.js';
+import { DARK_PALETTES, PALETTES, METRICS, THEME_TEXT, autoThresholds, formatValue, getMetric, levelFor } from './metrics.js';
 
 export const DEFAULTS = {
   metric: 'distance',
@@ -47,7 +47,10 @@ export function renderHeatmap(data, options = {}) {
 
   const requested = o.thresholds ?? metric.thresholds(o);
   const thresholds = requested === 'auto' ? autoThresholds(values) : requested;
-  const palette = o.palette ?? PALETTES[metric.palette];
+  if (o.theme && !THEME_TEXT[o.theme]) throw new Error(`theme must be "light" or "dark", got "${o.theme}"`);
+  const palette = o.palette ?? (o.theme === 'dark' ? DARK_PALETTES : PALETTES)[metric.palette];
+  // Without a theme, text uses currentColor and follows the page it is inlined in.
+  const textColor = o.theme ? `color:${THEME_TEXT[o.theme]};` : '';
   if (palette.length !== thresholds.length + 2) {
     throw new Error(`palette needs ${thresholds.length + 2} colours (rest + ${thresholds.length + 1} levels), got ${palette.length}`);
   }
@@ -71,7 +74,7 @@ export function renderHeatmap(data, options = {}) {
   parts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" class="garmin-heatmap" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"` +
       ` role="img" aria-label="${esc(label)}"` +
-      ` style="max-width:100%;height:auto;font-family:var(--garmin-heatmap-font, system-ui, sans-serif)">`,
+      ` style="max-width:100%;height:auto;${textColor}font-family:var(--garmin-heatmap-font, system-ui, sans-serif)">`,
     `<title>${esc(label)}</title>`
   );
 
@@ -189,7 +192,7 @@ function legend(metric, thresholds, palette, o, y) {
 /** Option names as HTML attributes, CLI flags and config keys use them. */
 export const OPTION_NAMES = [
   'metric', 'types', 'start', 'end', 'weeks', 'week-start', 'units', 'locale', 'thresholds',
-  'palette', 'summary', 'legend', 'noun', 'title', 'cell-size', 'gap', 'radius',
+  'palette', 'theme', 'summary', 'legend', 'noun', 'title', 'cell-size', 'gap', 'radius',
 ];
 
 /** Reads options from strings keyed by OPTION_NAMES. */
@@ -223,6 +226,7 @@ export function parseOptions(input) {
     locale: get('locale'),
     thresholds: thresholds === 'auto' ? 'auto' : thresholds?.split(',').map(Number),
     palette: list('palette'),
+    theme: get('theme'),
     summary: flag('summary'),
     legend: flag('legend'),
     noun: get('noun'),

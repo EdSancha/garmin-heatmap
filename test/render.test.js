@@ -90,6 +90,7 @@ test('rejects bad input', () => {
   assert.throws(() => renderHeatmap(data, { start: '2026-06-10', end: '2026-06-01' }), /after end/);
   assert.throws(() => renderHeatmap(data, { palette: ['#fff'] }), /palette needs 6 colours/);
   assert.throws(() => parseOptions({ thresholds: '1,two' }), /thresholds/);
+  assert.throws(() => renderHeatmap(data, { theme: 'sepia' }), /theme must be/);
 });
 
 test('parses attribute and flag strings', () => {
