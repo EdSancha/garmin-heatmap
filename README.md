@@ -50,7 +50,7 @@ activity names, IDs, GPS coordinates or start times. Format:
   "version": 1, "generated": "2026-10-22T05:17:00.000Z", "start": "2025-10-23", "end": "2026-10-22",
   "days": {
     "2026-06-01": {
-      "activities": { "running": { "count": 1, "distance": 12034, "duration": 3710, "elevation": 85 } },
+      "activities": { "running": { "count": 1, "distance": 12034, "duration": 3710, "elevation": 85, "hard": 540 } },
       "sleep": { "seconds": 27000, "score": 82 },
       "hrv": 118,
       "steps": 11873
@@ -59,7 +59,7 @@ activity names, IDs, GPS coordinates or start times. Format:
 }
 ```
 
-Distances and elevation are in metres, durations in seconds. Activity keys are Garmin type keys.
+Distances and elevation are in metres, durations in seconds; `hard` is time in heart-rate zones 4 and 5. Activity keys are Garmin type keys.
 
 ## 2. Show it
 
@@ -113,7 +113,7 @@ Attributes on the element, keys in a `build` config, flags on `render`:
 
 | Option | Default | |
 |---|---|---|
-| `metric` | `distance` | `distance`, `elevation`, `duration`, `activities`, `sleep`, `sleep-score`, `hrv`, `steps` |
+| `metric` | `distance` | `distance`, `elevation`, `duration`, `intensity` (minutes in heart-rate zones 4–5), `activities`, `sleep`, `sleep-score`, `hrv`, `steps` |
 | `types` | all | Activity types, comma-separated. `running` also matches `trail_running`, `treadmill_running`… |
 | `start`, `end` | last `weeks` weeks | `YYYY-MM-DD` |
 | `weeks` | `52` | Used when `start` is not set |

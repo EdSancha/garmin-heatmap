@@ -61,7 +61,7 @@ test('fetches every source in chunks and aggregates per day', async () => {
     ['/activitylist-service', (u) => ({
       body: u.searchParams.get('start') === '0'
         ? [
-            { startTimeLocal: '2026-01-05 07:00:00', activityType: { typeKey: 'running' }, distance: 10000.4, duration: 3000, elevationGain: 50, startLatitude: 40.1, activityName: 'Secret' },
+            { startTimeLocal: '2026-01-05 07:00:00', activityType: { typeKey: 'running' }, distance: 10000.4, duration: 3000, elevationGain: 50, hrTimeInZone_4: 600, hrTimeInZone_5: 120.4, startLatitude: 40.1, activityName: 'Secret' },
             { startTimeLocal: '2026-01-05 18:00:00', activityType: { typeKey: 'running' }, distance: 5000, duration: 1500, elevationGain: 20 },
           ]
         : [],
@@ -75,7 +75,7 @@ test('fetches every source in chunks and aggregates per day', async () => {
   const days = buildDays(raw, { start: '2026-01-01', end: '2026-03-01' });
 
   assert.deepEqual(days, {
-    '2026-01-05': { activities: { running: { count: 2, distance: 15000, duration: 4500, elevation: 70 } }, sleep: { seconds: 28800, score: 88 } },
+    '2026-01-05': { activities: { running: { count: 2, distance: 15000, duration: 4500, elevation: 70, hard: 720 } }, sleep: { seconds: 28800, score: 88 } },
     '2026-01-06': { steps: 12000 },
   });
   assert.ok(calls.every((c) => c.init.headers.Authorization === 'Bearer tok'));
