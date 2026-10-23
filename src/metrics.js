@@ -31,6 +31,7 @@ function hoursAndMinutes(hours) {
   const total = Math.round(hours * 60);
   const h = Math.floor(total / 60);
   const m = total % 60;
+  if (!h) return `${m}m`;
   return m ? `${h}h ${m}m` : `${h}h`;
 }
 

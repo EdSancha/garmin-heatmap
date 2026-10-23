@@ -56,6 +56,12 @@ test('counts hard minutes across activities', () => {
   assert.match(svg, /42 min<\/tspan><tspan[^>]*>in zones 4–5 per week<\/tspan><\/text>/);
 });
 
+test('writes short durations without hours', () => {
+  const svg = renderHeatmap(data, { metric: 'duration', start: '2026-06-01', end: '2026-06-01' });
+  assert.match(svg, />&lt;30m<\/text>/);
+  assert.match(svg, /Jun 1, 2026 · 1h<\/title>/);
+});
+
 test('converts units for imperial', () => {
   const svg = renderHeatmap(data, { start: '2026-06-01', end: '2026-06-01', types: ['running'], units: 'imperial' });
   assert.match(svg, /Jun 1, 2026 · 7\.5 mi/);
